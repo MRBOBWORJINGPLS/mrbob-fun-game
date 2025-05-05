@@ -18,31 +18,36 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Add light to the scene
-    const light = new THREE.PointLight(0xffffff, 1, 100);
-    light.position.set(10, 10, 10);
-    scene.add(light);
+    // Add lights to the scene
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Ambient light
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(10, 10, 10);
+    scene.add(directionalLight);
 
     // Load the 3D map file
     const loader = new THREE.GLTFLoader(baldi_map.glb);
-    loader.load(baldi_map.glb)
+    loader.load(
       'baldi_map.glb', // Ensure the file name matches exactly
       function (gltf) {
         const map = gltf.scene;
+        map.scale.set(1, 1, 1); // Adjust scale if necessary
+        map.position.set(0, 0, 0); // Adjust position if necessary
         scene.add(map);
-        map.position.set(0, 0, 0);
       },
       undefined,
       function (error) {
-        console.error('An error occurred while loading the 3D map:', error);
+        console.error('An error occurred:', error);
       }
     );
 
-    // Set camera position
-    camera.position.z = 5;
+    // Set camera to view the model
+    camera.position.set(0, 5, 10); // Move the camera back and slightly up
+    camera.lookAt(0, 0, 0);        // Make the camera look at the center of the scene
 
     // Animation loop
-    function animate(baldi_map.glb) {
+    function animate() {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
     }
